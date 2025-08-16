@@ -12,12 +12,19 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::latest()->paginate(10);
+        $search = $request->input('search');
+
+        $posts = Post::query()
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'ILIKE', "%{$search}%");
+            })
+            ->paginate(10)->appends(request()->query());
 
         return Inertia::render('Posts/Index', [
-            'posts' => $posts
+            'posts' => $posts,
+            'filters' => $request->only('search')
         ]);
     }
 

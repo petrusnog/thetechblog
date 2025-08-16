@@ -3,6 +3,10 @@
     <div class="container">
       <h1 class="title has-text-centered mb-5">📚 The Tech Blog</h1>
 
+      <!-- Search Form -->
+      <input type="text" v-model="search" placeholder="Search posts" class="border p-2 mb-4 w-full rounded">
+
+
       <!-- Cards -->
       <div class="columns is-multiline">
         <div v-for="post in posts.data" :key="post.id" class="column is-one-third">
@@ -24,13 +28,31 @@
 
 <script setup>
 import Card from '../../Components/Card.vue'
-import { Link } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
+import { debounce } from 'lodash'
+import { ref, watch } from 'vue'
+import { $route } from '@/ziggy'
 
-// props vindas do controller: posts (paginated) e filters atuais
 const props = defineProps({
   posts: { type: Object, required: true },
   filters: { type: Object, default: () => ({}) }
 })
+
+// Search system
+const search = ref(props.filters.search || '')
+
+const performSearch = debounce((value) => {
+  router.get(
+    $route('posts.index'),
+    { search: value },
+    { preserveState: true, replace: true }
+  )
+}, 500)
+
+watch(search, (value) => {
+  performSearch(value)
+})
+// End of search system
 
 </script>
 
