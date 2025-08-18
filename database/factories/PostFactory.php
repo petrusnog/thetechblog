@@ -16,15 +16,19 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
-        $status = $this->faker->randomElement(['draft', 'published']);
+        $sentences = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $sentences[] = $this->faker->catchPhrase();
+        }
+        
+        $paragraph = implode(' ', $sentences);
 
         return [
-            'title' => $this->faker->unique()->sentence(6),
-            'status' => $status,
-            'published_at' => $status === 'published'
-                ? $this->faker->dateTimeBetween('-6 months', 'now')
-                : null,
-            'body' => $this->faker->paragraphs(5, true)
+            'title' => $this->faker->firstName() . " went to " . $this->faker->city() . " to work as a " . $this->faker->jobTitle(),
+            'status' => 'published',
+            'published_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
+            'body' => $paragraph
         ];
     }
 }

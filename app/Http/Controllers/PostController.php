@@ -15,16 +15,29 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $order = $request->input('order') ?? 'asc';
+        $orderBy = $request->input('orderBy') ?? 'title';
 
         $posts = Post::query()
             ->when($search, function ($query, $search) {
-                $query->where('title', 'ILIKE', "%{$search}%");
+                $query->where('title', 'ILIKE', "%{$search}%")
+                    ->orwhere('body', 'ILIKE', "%{$search}%");
             })
-            ->paginate(10)->appends(request()->query());
+            ->when($orderBy, function ($query, $orderBy) use ($request) {
+                $order = $request->input('order');
+                $query->orderBy($orderBy, $order);
+            })
+            ->paginate(10)
+            ->appends(request()->query());
 
         return Inertia::render('Posts/Index', [
             'posts' => $posts,
-            'filters' => $request->only('search')
+            'orderableColumns' => Post::$orderable,
+            'filters' => [
+                'search' => $search,
+                'order' => $order,
+                'orderBy' => $orderBy
+            ]
         ]);
     }
 

@@ -7,6 +7,9 @@
                     {{ post.status }}
                 </span>
             </header>
+            <div class="card-content is-flex pt-0 pb-0">
+                <div class="publishedAt px-3 py-2">{{ publishedAt }}</div>
+            </div>
             <div class="card-content">
                 <div class="content">
                     {{ preview }}
@@ -23,6 +26,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import moment from 'moment';
 
 const props = defineProps({
     post: { type: Object, required: true }
@@ -36,6 +40,11 @@ const preview = computed(() => {
 const  viewLink = computed(() => {
     return `posts/${props.post.id}`
 })
+
+const publishedAt = computed(() => {
+    return moment(props.post.published_at).format('MM/DD/YYYY HH:mm')
+})
+
 </script>
 
 <style>
@@ -43,5 +52,12 @@ const  viewLink = computed(() => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.publishedAt {
+    border: 1px solid rgb(206, 206, 206);
+    width: fit-content;
+    font-size: 15px;
+    background: rgb(206, 206, 206);
 }
 </style>
