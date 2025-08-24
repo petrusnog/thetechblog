@@ -9,8 +9,9 @@ class Post extends Model
 {
     use HasFactory;
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PUBLISHED = 'published';
+    private const STATUS_DRAFT = 'draft';
+    private const STATUS_PUBLISHED = 'published';
+    private const POSTS_PER_PAGE = 10;
 
     public static array $orderable = [
         'title',
@@ -23,5 +24,10 @@ class Post extends Model
             self::STATUS_DRAFT,
             self::STATUS_PUBLISHED
         ];
+    }
+
+    public static function getPostsPerPage()
+    {
+        return self::POSTS_PER_PAGE;
     }
 }

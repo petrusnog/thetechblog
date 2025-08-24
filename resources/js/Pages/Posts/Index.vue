@@ -3,6 +3,7 @@
     <div class="container">
       <h1 class="title has-text-centered mb-5">📚 The Tech Blog</h1>
 
+      <!-- Filters -->
       <div class="is-flex is-justify-content-space-between is-align-items-center">
         <div class="is-flex is-justify-content-center">
           <!-- Search Form -->
@@ -46,6 +47,9 @@
         <button @click="goToPostCreation()" class="button is-success">Create post</button>
       </div>
 
+      <!-- Total count -->
+       <p class="mb-5">Showing {{ posts_per_page }} of <strong>{{ total }} posts</strong></p>
+
       <!-- Cards -->
       <div class="columns is-multiline">
         <div v-for="post in posts.data" :key="post.id" class="column is-one-third">
@@ -74,6 +78,8 @@ import { $route } from '@/ziggy'
 
 const props = defineProps({
   posts: { type: Object, required: true },
+  total: { type: Number },
+  posts_per_page: { type: Number },
   orderableColumns: { type: Array },
   filters: { type: Object, default: () => ({}) }
 })

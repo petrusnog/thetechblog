@@ -28,11 +28,13 @@ class PostController extends Controller
                 $order = $request->input('order') ?? 'asc';
                 $query->orderBy($orderBy, $order);
             })
-            ->paginate(10)
+            ->paginate(Post::getPostsPerPage())
             ->appends(request()->query());
 
         return Inertia::render('Posts/Index', [
             'posts' => $posts,
+            'posts_per_page' => Post::getPostsPerPage(),
+            'total' => $posts->total(),
             'orderableColumns' => Post::$orderable,
             'filters' => [
                 'search' => $search,
