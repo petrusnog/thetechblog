@@ -15,17 +15,28 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $order = $request->input('order') ?? 'asc';
-        $orderBy = $request->input('orderBy') ?? 'title';
+        $data = $request->all();
+
+        $search = $data['search'] ?? "";
+        $searchBy = $data['searchBy'] ?? 'title';
+        $order = $data['order'] ?? 'asc';
+        $orderBy = $data['orderBy'] ?? 'title';
+
+        if (!in_array($searchBy, Post::getSearchableColumns())) {
+            $searchBy = 'title';
+        }
+        if (!in_array($order, Post::getOrderDirections())) {
+            $order = 'asc';
+        }
+        if (!in_array($orderBy, Post::getSearchableColumns())) {
+            $orderBy = 'title';
+        }
 
         $posts = Post::query()
-            ->when($search, function ($query, $search) {
-                $query->where('title', 'ILIKE', "%{$search}%")
-                    ->orwhere('body', 'ILIKE', "%{$search}%");
+            ->when($search, function ($query, $search) use ($searchBy) {
+                $query->where($searchBy, 'ILIKE', "%{$search}%");
             })
-            ->when($orderBy, function ($query, $orderBy) use ($request) {
-                $order = $request->input('order') ?? 'asc';
+            ->when($orderBy, function ($query, $orderBy) use ($order) {
                 $query->orderBy($orderBy, $order);
             })
             ->paginate(Post::getPostsPerPage())
@@ -35,9 +46,10 @@ class PostController extends Controller
             'posts' => $posts,
             'posts_per_page' => Post::getPostsPerPage(),
             'total' => $posts->total(),
-            'orderableColumns' => Post::$orderable,
+            'orderableColumns' => Post::getSearchableColumns(),
             'filters' => [
                 'search' => $search,
+                'searchBy' => $searchBy,
                 'order' => $order,
                 'orderBy' => $orderBy
             ]

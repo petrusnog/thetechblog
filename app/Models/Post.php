@@ -9,25 +9,49 @@ class Post extends Model
 {
     use HasFactory;
 
-    private const STATUS_DRAFT = 'draft';
-    private const STATUS_PUBLISHED = 'published';
     private const POSTS_PER_PAGE = 10;
-
-    public static array $orderable = [
+    private static array $statuses = [
+        'draft',
+        'published'
+    ];
+    private static array $orderable_columns = [
         'title',
         'body'
     ];
+    private static array $order_directions = [
+        'asc',
+        'desc'
+    ];
 
+    /**
+     * The valid statuses for the post.
+     */
     public static function getStatuses()
     {
-        return [
-            self::STATUS_DRAFT,
-            self::STATUS_PUBLISHED
-        ];
+        return self::$statuses;
     }
 
+    /**
+     * The posts per page limit in the application.
+     */
     public static function getPostsPerPage()
     {
         return self::POSTS_PER_PAGE;
+    }
+
+    /**
+     * The posts' orderable / searchable columns.
+     */
+    public static function getSearchableColumns()
+    {
+        return self::$orderable_columns;
+    }
+
+    /**
+     * The valid order directions for a post (ASCENDING, DESCENDING).
+     */
+    public static function getOrderDirections()
+    {
+        return self::$order_directions;
     }
 }

@@ -6,12 +6,26 @@
       <!-- Filters -->
       <div class="is-flex is-justify-content-space-between is-align-items-center">
         <div class="is-flex is-justify-content-center">
-          <!-- Search Form -->
+          <!-- Search -->
           <div class="field mr-3">
             <label class="label">Search:</label>
             <div class="control">
               <input type="text" v-model="search" placeholder="Search posts"
                 class="input border p-2 mb-4 mr-4 w-full rounded">
+            </div>
+          </div>
+
+          <!-- Search By -->
+          <div class="field mr-3">
+            <label class="label">Search by:</label>
+            <div class="control">
+              <div class="select">
+                <select v-model="searchBy" name="orderBy" id="orderBy" class="border p-2 mb-4 w-full rounded">
+                  <template v-for="column in orderableColumns" :key="column">
+                    <option :value="column">{{ column }}</option>
+                  </template>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -48,7 +62,7 @@
       </div>
 
       <!-- Total count -->
-       <p class="mb-5">Showing {{ posts_per_page }} of <strong>{{ total }} posts</strong></p>
+      <p class="mb-5">Showing {{ posts_per_page }} of <strong>{{ total }} posts</strong></p>
 
       <!-- Cards -->
       <div class="columns is-multiline">
@@ -86,14 +100,15 @@ const props = defineProps({
 
 // Search system
 const search = ref(props.filters.search)
-const order = ref(props.filters.order ?? 'asc')
-const orderBy = ref(props.filters.orderBy ?? 'title')
+const searchBy = ref(props.filters.searchBy)
+const order = ref(props.filters.order)
+const orderBy = ref(props.filters.orderBy)
 
-const performSearch = debounce((value = "", order = "asc", orderBy = "title") => {
-  if (!value) {
+const performSearch = debounce((search = "", searchBy = "", order = "asc", orderBy = "title") => {
+  if (!search) {
     router.get(
       $route('posts.index'),
-      { order: order, orderBy: orderBy },
+      { searchBy: searchBy, order: order, orderBy: orderBy },
       { preserveState: true, replace: true }
     )
     return
@@ -101,7 +116,12 @@ const performSearch = debounce((value = "", order = "asc", orderBy = "title") =>
 
   router.get(
     $route('posts.index'),
-    { search: value, order: order, orderBy: orderBy },
+    {
+      search: search,
+      searchBy: searchBy,
+      order: order,
+      orderBy: orderBy
+    },
     { preserveState: true, replace: true }
   )
 }, 500)
@@ -111,15 +131,20 @@ const goToPostCreation = () => {
 }
 
 watch(search, (searchValue) => {
-  performSearch(searchValue, order.value, orderBy.value)
+  performSearch(searchValue, searchBy.value, order.value, orderBy.value)
 })
 
+watch(searchBy, (searchByValue) => {
+  performSearch(search.value, searchByValue, order.value, orderBy.value)
+})
+
+
 watch(order, (orderValue) => {
-  performSearch(search.value, orderValue, orderBy.value)
+  performSearch(search.value, searchBy.value, orderValue, orderBy.value)
 })
 
 watch(orderBy, (orderByValue) => {
-  performSearch(search.value, order.value, orderByValue)
+  performSearch(search.value, searchBy.value, order.value, orderByValue)
 })
 // End of search system
 
