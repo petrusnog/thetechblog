@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -24,7 +25,7 @@ class PostController extends Controller
                     ->orwhere('body', 'ILIKE', "%{$search}%");
             })
             ->when($orderBy, function ($query, $orderBy) use ($request) {
-                $order = $request->input('order');
+                $order = $request->input('order') ?? 'asc';
                 $query->orderBy($orderBy, $order);
             })
             ->paginate(10)
@@ -46,7 +47,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Posts/Create', [
+            'status' => Post::getStatuses()
+        ]);
     }
 
     /**
@@ -54,7 +57,39 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $status = 200;
+        $message = "Post created successfully!";
+
+        try {
+            $data = $request->all();
+            $validator = Validator::make($data, [
+                'title' => 'required|string|max:255',
+                'body' => 'required|string|min:20',
+                'status' => 'required|in:' . implode(',', Post::getStatuses())
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception($validator->errors()->first());
+            }
+
+            $post = new Post();
+            $post->title = $data['title'];
+            $post->body = $data['body'];
+            $post->status = $data['status'];
+            $now = new \Datetime('now', new \DateTimeZone('UTC'));
+            $post->published_at = $now->format('Y-m-d H:i:s');
+
+            $post->save();
+
+        } catch (\Exception $e) {
+            $status = 400;
+            $message = $e->getMessage();
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message
+        ], $status);
     }
 
     /**

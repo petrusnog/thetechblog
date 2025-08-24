@@ -3,42 +3,47 @@
     <div class="container">
       <h1 class="title has-text-centered mb-5">📚 The Tech Blog</h1>
 
-      <div class="is-flex is-justify-content-center">
-        <!-- Search Form -->
-        <div class="field mr-3">
-          <label class="label">Search:</label>
-          <div class="control">
-            <input type="text" v-model="search" placeholder="Search posts"
-              class="input border p-2 mb-4 mr-4 w-full rounded">
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
+        <div class="is-flex is-justify-content-center">
+          <!-- Search Form -->
+          <div class="field mr-3">
+            <label class="label">Search:</label>
+            <div class="control">
+              <input type="text" v-model="search" placeholder="Search posts"
+                class="input border p-2 mb-4 mr-4 w-full rounded">
+            </div>
           </div>
-        </div>
 
-        <!-- Order -->
-        <div class="field mr-3">
-          <div class="label">Order:</div>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select v-model="order" class="border p-2 mb-4 w-full rounded">
-                <option value="asc">ASC</option>
-                <option value="desc">DESC</option>
-              </select>
+          <!-- Order -->
+          <div class="field mr-3">
+            <div class="label">Order:</div>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select v-model="order" class="border p-2 mb-4 w-full rounded">
+                  <option value="asc">ASC</option>
+                  <option value="desc">DESC</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order By -->
+          <div class="field mr-3">
+            <div class="label">Order by:</div>
+            <div class="control">
+              <div class="select">
+                <select v-model="orderBy" name="orderBy" id="orderBy" class="border p-2 mb-4 w-full rounded">
+                  <template v-for="column in orderableColumns" :key="column">
+                    <option :value="column">{{ column }}</option>
+                  </template>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Order By -->
-        <div class="field mr-3">
-          <div class="label">Order by:</div>
-          <div class="control">
-            <div class="select">
-              <select v-model="orderBy" name="orderBy" id="orderBy" class="border p-2 mb-4 w-full rounded">
-                <template v-for="column in orderableColumns" :key="column">
-                  <option :value="column">{{ column }}</option>
-                </template>
-              </select>
-            </div>
-          </div>
-        </div>
+
+        <button @click="goToPostCreation()" class="button is-success">Create post</button>
       </div>
 
       <!-- Cards -->
@@ -90,10 +95,14 @@ const performSearch = debounce((value = "", order = "asc", orderBy = "title") =>
 
   router.get(
     $route('posts.index'),
-    { search: value, order: order, orderBy: orderBy  },
+    { search: value, order: order, orderBy: orderBy },
     { preserveState: true, replace: true }
   )
 }, 500)
+
+const goToPostCreation = () => {
+  router.get($route('posts.create'));
+}
 
 watch(search, (searchValue) => {
   performSearch(searchValue, order.value, orderBy.value)
