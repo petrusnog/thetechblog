@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -77,7 +78,12 @@ class PostController extends Controller
         try {
             $data = $request->all();
             $validator = Validator::make($data, [
-                'title' => 'required|string|max:255',
+                'title' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('posts', 'title')
+                ],
                 'body' => 'required|string|min:20',
                 'status' => 'required|in:' . implode(',', Post::getStatuses())
             ]);

@@ -24,7 +24,7 @@
                             <button class="button" @click="currentStep--" :disabled="currentStep == 1">
                                 <i class="fa-solid fa-arrow-left mr-2"></i> Previous
                             </button>
-                            <button v-if="currentStep === 2" class="button is-success"  @click="createPost()">
+                            <button v-if="currentStep === 2" class="button is-success"  @click="createPost()" :disabled="creatingPost">
                                 Create
                             </button>
                             <button v-else class="button"  @click="currentStep++">
@@ -46,15 +46,16 @@ import Step1 from './Step1.vue';
 import Step2 from './Step2.vue';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
+import { router } from '@inertiajs/vue3'
 import "vue3-toastify/dist/index.css";
 
 const props = defineProps({
   status: { type: Array }
 })
 
-console.log(props);
-
 const currentStep = ref(1);
+const creatingPost = ref(false);
+const creatingPostTimeout = 1500;
 
 const formData = reactive({
     step1: {
@@ -68,14 +69,43 @@ const formData = reactive({
 });
 
 const createPost = async () => {
+    creatingPost.value = true
     axios.post('/api/posts/store', {
         title: formData.step1.title,
         status: formData.step1.selectedStatus,
         body: formData.step2.body
     }).then(response => {
-        console.log(response.data)
+        if (response.data.status == 200) {
+            toast.success('Post created successfully! Redirecting...', {
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnHover: true,
+                onClose: () => router.get($route('posts.index'))
+            });
+
+        } else {
+            const message = response.data.message || 'An unknown error occurred.';
+            toast.error(message, {
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnHover: true
+            });
+
+            setTimeout(() => {
+                creatingPost.value = false
+            }, creatingPostTimeout);
+        }
     }).catch(error => {
-        toast(error.response.data.message)
+        const message = error.response?.data?.message || error.message || 'An unknown error occurred.';
+        toast.error(message, {
+            timeout: 3000,
+            closeOnClick: true,
+            pauseOnHover: true
+        });
+
+        setTimeout(() => {
+            creatingPost.value = false
+        }, creatingPostTimeout);
     })
 }
 
