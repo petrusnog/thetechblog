@@ -18,8 +18,8 @@
         </div>
         <footer class="card-footer">
             <a :href="viewLink" class="card-footer-item">View</a>
-            <a href="#" class="card-footer-item">Edit</a>
-            <a href="#" class="card-footer-item has-text-danger">Delete</a>
+            <!-- <a href="#" class="card-footer-item">Edit</a>
+            <a href="#" class="card-footer-item has-text-danger">Delete</a> -->
         </footer>
     </div>
 </template>
