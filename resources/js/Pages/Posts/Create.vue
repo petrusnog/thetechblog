@@ -76,8 +76,8 @@ const createPost = async () => {
         body: formData.step2.body
     }).then(response => {
         if (response.data.status == 200) {
-            toast.success('Post created successfully! Redirecting...', {
-                timeout: 3000,
+            toast.success('Post created. Click here!', {
+                timeout: 500,
                 closeOnClick: true,
                 pauseOnHover: true,
                 onClose: () => router.get($route('posts.index'))
