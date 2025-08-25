@@ -7,20 +7,18 @@ It is a simple resource listing platform built with **Laravel 10** (backend) and
 
 ## 🚀 Features
 
-- Create blog posts
-- Post listing with pagination
-- Modern Vue.js frontend with Laravel backend
-- Database migrations and seeders for initial setup
-
+- (STORY-001) Resource listing with pagination with 10 items per page, filtering and sorting with immediate UI feedback
+- (STORY-002) Resource creation in a multi-step form, with proper validation.
 ---
 
 ## 🛠️ Tech Stack
 
 - [Laravel 10](https://laravel.com/) — PHP framework for the backend (v.10)
 - [Vue.js 3](https://vuejs.org/) — Progressive frontend framework
-- [Eloquent ORM](https://laravel.com/docs/eloquent) — Database abstraction
+- [Vue3 Toastify](https://vue3-toastify.js-bridge.com/) - For displaying the application's errors in the UI.
+- [Eloquent ORM](https://laravel.com/docs/eloquent) — Laravel database abstraction
 - [Bulma CSS](https://bulma.io/) — For styling, frontend.
-- [PostgreSQL](https://www.postgresql.org/) — DBMS
+- [PostgreSQL 15](https://www.postgresql.org/) — DBMS
 
 ---
 
@@ -31,7 +29,7 @@ Make sure you have the following installed on your machine:
 - PHP >= 8.2
 - Composer
 - Node.js >= 20 & npm (or yarn/pnpm)
-- PostgreSQL (or another supported database)
+- PostgreSQL 15 (or another supported database)
 
 ---
 
