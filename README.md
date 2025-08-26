@@ -1,7 +1,6 @@
 # The Tech Blog
 
-This project was created for **Curotec's technical assessment**.
-It is a simple resource listing platform built with **Laravel 10** (backend) and **Vue.js** (frontend).
+Resource listing platform built with **Laravel 10** (backend) and **Vue.js** (frontend).
 
 ---
 
